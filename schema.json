@@ -1,0 +1,97 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$defs": {
+        "versionPredicate": {
+            "type": "string",
+            "pattern": "^(\\*|((>=|<=|>|<|=|~|^)?((((\\d+(\\.\\d+)*(\\.\\d+|x|X|\\*)?)|((\\d+(\\.\\d+)*-(|[-0-9A-Za-z]+(\\.[-0-9A-Za-z]+)*))))(\\+.*)?)|((=)?(?!(((\\d+(\\.\\d+)*(\\.\\d+|x|X|\\*)?)|((\\d+(\\.\\d+)*-(|[-0-9A-Za-z]+(\\.[-0-9A-Za-z]+)*))))(\\+.*)?))[^ ]+))( (>=|<=|>|<|=|~|^)?((((\\d+(\\.\\d+)*(\\.\\d+|x|X|\\*)?)|((\\d+(\\.\\d+)*-(|[-0-9A-Za-z]+(\\.[-0-9A-Za-z]+)*))))(\\+.*)?)|((=)?(?!(((\\d+(\\.\\d+)*(\\.\\d+|x|X|\\*)?)|((\\d+(\\.\\d+)*-(|[-0-9A-Za-z]+(\\.[-0-9A-Za-z]+)*))))(\\+.*)?))[^ ]+)))*))$"
+        },
+        "advancementItem": {
+            "type": "object",
+            "required": ["type", "name", "advancement"],
+            "properties": {
+                "type": {
+                    "const": "achieve_advancement"
+                },
+                "name": {"type": "string"},
+                "advancement": {"type": "string"},
+                "version": {"$ref": "#/$defs/versionPredicate"}
+            }
+        },
+        "obtainItemItem": {
+            "type": "object",
+            "required": ["type", "name", "item_id"],
+            "properties": {
+                "type": {
+                    "const": "obtain_item"
+                },
+                "name": {"type": "string"},
+                "item_id": {
+                    "oneOf": [
+                        {"type": "string"},
+                        {"type": "integer"}
+                    ]
+                },
+                "item_amount": {"type": "integer", "default": 1},
+                "item_data": {"type": "integer"},
+                "item_nbt": {"type": "string"},
+                "strict_mode": {"type": "boolean", "default": true},
+                "version": {"$ref": "#/$defs/versionPredicate"}
+            }
+        },
+        "playerStatItem": {
+            "type": "object",
+            "required": ["type", "name", "category", "stat", "goal"],
+            "properties": {
+                "type": {
+                    "const": "player_stat"
+                },
+                "name": {"type": "string"},
+                "category": {"type": "string"},
+                "stat": {"type": "string"},
+                "goal": {"type": "integer"},
+                "version": {"$ref": "#/$defs/versionPredicate"}
+            }
+        },
+        "dummyItem": {
+            "type": "object",
+            "required": ["type", "name"],
+            "properties": {
+                "type": {
+                    "const": "player_stat"
+                },
+                "name": {"type": "string"},
+                "version": {"$ref": "#/$defs/versionPredicate"}
+            }
+        }
+    },
+    "type": "object",
+    "required": ["id", "name", "version", "src_category", "conditions"],
+    "properties": {
+        "id": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string"
+        },
+        "version": {
+            "$ref": "#/$defs/versionPredicate"
+        },
+        "src_category": {
+            "type": "string"
+        },
+        "conditions": {
+            "type": "array",
+            "items": {
+                "type": "array",
+                "items": {
+                    "oneOf": [
+                        {"$ref": "#/$defs/advancementItem"},
+                        {"$ref": "#/$defs/obtainItemItem"},
+                        {"$ref": "#/$defs/playerStatItem"},
+                        {"$ref": "#/$defs/dummyItem"}
+                    ]
+                }
+            }
+        }
+    }
+}
